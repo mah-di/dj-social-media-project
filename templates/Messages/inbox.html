@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+    {% if alert %}
+        <div class="alert-warning">{{alert}}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-sm-3">
+            {% for inbox in user.received_from.all %}
+            <a style="text-decoration: none; color: #000;" href="{% url 'messages:inbox' username=inbox.sender %}"><p style="background-color: rgb(241, 241, 241);">{{inbox.sender}}
+                {% if inbox.alert %}
+                <span style="color: red;">•</span>
+                {% endif %}
+            </p></a>
+            <p></p>
+        {% endfor %}
+        </div>
+        <div class="col-sm-6">
+            <div class="row" style="padding: 20px; border-bottom: 1px solid rgb(190, 190, 190);">
+                <div class="col-sm-1">
+                    <a href="{% url 'profile:user_profile' pk=recipient.pk %}"><img class="rounded-circle" src="/media/{{recipient.profile.pro_pic}}" alt="" width="50px" height="50px"></a>
+                </div>
+                <div class="col-sm-10" style="padding-left: 25px; padding-top: 7px;">
+                    <h4 style="display: inline-block;"><a style="text-decoration: none; color: #000;" href="{% url 'profile:user_profile' pk=recipient.pk %}">{{recipient}}</a></h4>
+                </div>
+            </div>
+            <div style="height: 77vh; overflow-y: scroll; background-color: #dbdbdb; padding: 20px;">
+                {% for message in messages %}
+                
+                {% if message.sender == user %}
+                <div>
+                    
+                    {% if message.message != '' %}
+                    <div class="d-flex flex-row-reverse">
+                        <p style="display: inline-block; background: #8f91ef; padding: 7px 20px; overflow: hidden; border-radius: 30px; max-width: 75%;">{{ message.message }}</p>
+                    </div>
+
+                    {% elif message.picture %}
+                    <div class="d-flex flex-row-reverse">
+                        <img src="/media/{{ message.picture }}" alt="" width="80%">
+                    </div>
+                    
+                    {% elif message.attachment %}
+                    <div class="d-flex flex-row-reverse">
+                        <div style="background: #8f91ef; overflow: hidden; border-radius: 30px; width: 75%;">
+                            <a href="{% url 'post:single_post' pk=message.attachment.pk %}">
+                                <p style="padding: 7px 20px 0 20px; text-decoration: none; color: #000;">(@{{message.attachment.author}}) {{message.attachment.caption|slice:":50"}}</p>
+                                <img src="/media/{{message.attachment.image}}" alt="" width="100%">
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% else %}
+                <div>
+
+                    {% if message.message != '' %}
+                    <div>
+                        <p style="display: inline-block; background: #fff; padding: 7px 20px; overflow: hidden; border-radius: 30px; max-width: 75%;">{{ message.message }}</p>
+                    </div>
+                   
+                    {% elif message.picture %}
+                        <img src="/media/{{ message.picture }}" alt="" width="80%"">
+                   
+                    {% elif message.attachment %}
+                        <div style="background: #fff; overflow: hidden; border-radius: 30px; width: 75%;">
+                            <a href="{% url 'post:single_post' pk=message.attachment.pk %}">
+                                <p style="padding: 7px 20px 0 20px; text-decoration: none; color: #000;">(@{{message.attachment.author}}) {{message.attachment.caption|slice:":50"}}</p>
+                                <img src="/media/{{message.attachment.image}}" alt="" width="100%">
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% endif %}
+                <br>
+
+                {% endfor %}
+            </div>
+            <div>
+                <form method="POST" action="{% url 'messages:send_message' pk=recipient.pk %}">
+                    {{ new_message|crispy }}
+                    {% csrf_token %}
+                    <input type="submit" value="SEND" class="btn btn-sm btn-primary">
+                </form>
+                <br>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'messages:send_picture' pk=recipient.pk %}">
+                    {{ new_picture|crispy }}
+                    {% csrf_token %}
+                    <input type="submit" value="SEND" class="btn btn-sm btn-primary">
+                </form>
+                <br>
+                <br>
+                <br>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

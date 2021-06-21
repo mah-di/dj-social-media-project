@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load custom_filter %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="offset-sm-2 col-sm-8">
+            <!-- <p>{{comments_liked}} likes</p> -->
+            <div class="row">
+                <div class="col-sm-1">
+                    <img class="rounded-circle" src="/media/{{post.author.profile.pro_pic}}" alt="" width="70px" height="70px">
+                </div>
+                <div class="col-sm-10" style="padding-left: 40px;">
+                    <h5 style="display: inline-block;"><a href="{% url 'profile:user_profile' pk=post.author.pk %}">{{post.author.username}}</a></h5>
+                    <p>{{post.post_date}}</p>
+                </div>
+                <div class="col-sm-1">
+                    {% if post.author == user %}
+                    <a href="{% url 'post:edit_post' pk=post.pk %}" class="btn btn-light btn-sm" style="margin-top: -6px;">Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <p>{{post.caption}}</p>
+            <img src="/media/{{post.image}}" alt="" width="100%">
+            <hr>
+
+            {% if user.is_authenticated %}
+            {% if user.pk in post|post_liker %}
+            <a href="{% url 'post:post_unlike' pk=post.pk %}"><i class="fas fa-heart"></i></a>
+            {% else %}
+            <a href="{% url 'post:post_like' pk=post.pk %}"><i class="far fa-heart"></i></a>
+            {% endif %}
+            {% endif %}
+            
+            {% if post.likes.count == 1 %}
+            <span><a style="text-decoration: none;" href="{% url 'profile:post_likers' pk=post.pk %}">{{ post.likes.count }} like</a></span>
+            {% elif post.likes.count > 1 %}
+            <span><a style="text-decoration: none;" href="{% url 'profile:post_likers' pk=post.pk %}">{{ post.likes.count }} likes</a></span>
+            {% else %}
+            <span>No Likes.</span>
+            {% endif %}
+            
+            {% if user.is_authenticated %}
+            <a style="margin-left: 30px;" href="{% url 'post:share_list' pk=post.pk %}"><i class="far fa-paper-plane"></i></a>
+            {% endif %}
+
+            <hr>
+            
+            {% if post.comments.count > 0 %}
+            <p>{{post.comments.count}} Comments</p>
+            {% else %}
+            <p>No Comments</p>
+            {% endif %}
+            
+            {% if user.is_authenticated %}
+            <form method="POST" action="{% url 'post:comment' pk=post.pk %}">
+                <input type="text" class="form-control" placeholder="Write a comment.." name="comment">
+                {% csrf_token %}
+                
+                <button style="width: 100%;" type="submit" class="btn btn-primary btn-sm">Comment</button>
+            </form>
+            {% endif %}
+            
+            <br>
+            <hr>
+            <br>
+            
+            {% for comment in post.comments.all %}
+            <div class="row">
+                <div class="col-sm-10">
+                    <img class="rounded-circle" src="/media/{{comment.commentor.profile.pro_pic}}" alt="" width="50px" height="50px">
+                    <a style="text-decoration: none;" href="{% url 'profile:user_profile' pk=comment.commentor.pk %}"><span style="font-size: larger; font-weight: 500; margin-right: 30px;">{{comment.commentor}}</span></a>
+                    <span>{{comment.comment}}</span>
+                </div>
+                <div class="col-sm-2">
+                    {% if user == comment.commentor %}
+                    <a href="{% url 'post:edit_comment' pk=comment.pk %}" class="btn btn-light btn-sm">Edit</a>
+                    <a href="{% url 'post:delete_comment' pk=comment.pk %}" class="btn btn-light btn-sm">Delete</a>
+                    {% elif user == post.author %}
+                    <a href="{% url 'post:delete_comment' pk=comment.pk %}" class="btn btn-light btn-sm">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if user.is_authenticated %}
+            {% if comment.pk in comments_liked %}
+            <a href="{% url 'post:comment_unlike' pk=comment.pk %}"><i class="fas fa-heart"></i></a>
+            {% else %}
+            <a href="{% url 'post:comment_like' pk=comment.pk %}"><i class="far fa-heart"></i></a>
+            {% endif %}
+            {% endif %}
+            
+            {% if comment.likes.count == 1 %}
+            <span><a style="text-decoration: none;" href="{% url 'profile:comment_likers' pk=comment.pk %}">{{ comment.likes.count }} like</a></span>
+            {% elif comment.likes.count > 1 %}
+            <span><a style="text-decoration: none;" href="{% url 'profile:comment_likers' pk=comment.pk %}">{{ comment.likes.count }} likes</a></span>
+            {% else %}
+            <span>No Likes.</span>
+            {% endif %}
+            
+            {% endfor %}
+        
+        </div>
+    </div>
+
+{% endblock %}

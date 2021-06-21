@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+<center>
+    <div class="col-sm-6">
+        <form method="POST" enctype="multipart/form-data">
+            {{ form|crispy }}
+            {% csrf_token %}
+
+            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">{% if comment %}Update Comment{% else %}Post{% endif %}</button>
+            {% if pk %}
+            <a href="{% url 'post:delete_post' pk=pk %}">Delete Post</a>
+            {% elif comment %}
+            <a href="{% url 'post:delete_comment' pk=cmt_pk %}">Delete Comment</a>
+            {% endif %}
+        </form>
+    </div>
+</center>
+
+{% endblock %}

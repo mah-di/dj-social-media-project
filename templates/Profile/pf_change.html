@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+    <center>
+        <div class="col-sm-4">
+            {% if propic %}
+            <h4>Currently:</h4>
+            <img src="/media/{{user.profile.set_pro_pic}}" alt="" width="80%">
+            {% endif %}
+            <form method="POST" enctype="multipart/form-data">
+                {{ form|crispy }}
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger" style="width: 100%; margin-top: 20px;">{% if propic %}Update Profile Picture{% else %}Change Password{% endif %}</button>
+            </form>
+        </div>
+    </center>
+
+{% endblock %}

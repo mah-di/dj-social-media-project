@@ -1,0 +1,25 @@
+{% extends 'core.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+    <p>{{url}}</p>
+
+    <center>
+        <div class="col-sm-4">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form|crispy }}
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger" style="width: 100%;">{% if set_profile %}Save And Continue{% elif login %}LogIn{% else %}SignUp{% endif %}</button>
+            </form>
+        </div>
+        {% if not set_profile and not login %}
+        <div class="com-sm-4">
+            <hr>
+            <p>Already Have an Account? <a href="{% url 'account:login' %}">Log In</a></p>
+        </div>
+        {% endif %}
+    </center>
+
+{% endblock %}

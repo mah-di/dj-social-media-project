@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load custom_filter %}
+
+{% block body %}
+
+    <div class="row">
+        
+        {% if search %}
+        
+        <div class="offset-sm-3 col-sm-6 row">
+            <p>Search Results For "{{search}}"</p>
+    
+            {% for profile in results %}
+            <div class="col-sm-8">
+                <a style="text-decoration: none;" href="{% url 'profile:user_profile' pk=profile.pk %}">
+                    <img class="rounded-circle" src="/media/{{ profile.profile.pro_pic }}" width="40px" height="40px">
+                    <span style="font-size: 18px;">{{profile.username}}</span>
+                </a>
+            </div>
+
+            <div class="col-sm-4">
+                {% if user != profile %}
+                {% if profile.pk in following %}
+                <a href="{% url 'profile:unfollow' pk=profile.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Unfollow</a>
+                {% else %}
+                <a href="{% url 'profile:follow' pk=profile.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Follow</a>
+                {% endif %}
+                {% endif %}
+            </div>
+            <br>
+            <br>
+            <hr>
+            <br>
+
+            {% endfor %}
+        </div>
+        
+
+        {% else %}
+
+        <div class="col-sm-8 offset-sm-2">
+
+            {% for post in posts %}
+            <h3>
+                <a href="{% url 'profile:user_profile' pk=post.author.pk %}" style="text-decoration: none; color: #000;">{{post.author}}</a>
+            </h3>
+            <p>{{post.post_date}}</p>
+            <a href="{% url 'post:single_post' pk=post.pk %}">
+                <img src="/media/{{post.image}}" alt="" width="100%">
+            </a>
+            <p>{{post.caption}}</p>
+            
+            {% if user.is_authenticated %}
+            {% if post.pk in likes %}
+            <a href="{% url 'post:post_unlike' pk=post.pk %}"><i class="fas fa-heart"></i></a>
+            {% else %}
+            <a href="{% url 'post:post_like' pk=post.pk %}"><i class="far fa-heart"></i></a>
+            {% endif %}
+            {% endif %}
+
+                {% if post.likes.count == 1 %}
+                <span><a style="text-decoration: none;" href="{% url 'profile:post_likers' pk=post.pk %}">{{ post.likes.count }} like</a></span>
+                {% elif post.likes.count > 1 %}
+                <span><a style="text-decoration: none;" href="{% url 'profile:post_likers' pk=post.pk %}">{{ post.likes.count }} likes</a></span>
+                {% else %}
+                <span>No Likes.</span>
+                {% endif %}
+
+                &nbsp; &nbsp; {{post.comments.count}} comments
+                
+                &nbsp; &nbsp; <a href="{% url 'post:share_list' pk=post.pk %}"><i class="far fa-paper-plane"></i></a>
+
+            <hr>
+            {% endfor %}
+
+        </div>
+            
+        {% endif %}
+    </div>
+
+{% endblock %}

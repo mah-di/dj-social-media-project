@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_filter %}
+
+{% block body %}
+
+    {% if other %}
+
+    <div class="row">
+        <div class="col-sm-4">
+            <center>
+                <img class="rounded-circle" src="/media/{{ other_user.profile.pro_pic }}" width="150px" height="150px">
+            </center>
+        </div>
+        <div class="col-sm-8">
+            <h3 style="font-weight: 300; display: inline-block; margin-right: 40px;">{{other_user.username}}</h3>
+            
+            {% if user.pk in other_user.follower.all|as_list %}
+            <a href="{% url 'profile:unfollow' pk=other_user.pk %}" class="btn btn-primary" style="margin-top: -8px;">Unfollow</a>
+            {% else %}
+            <a href="{% url 'profile:follow' pk=other_user.pk %}" class="btn btn-primary" style="margin-top: -8px;">Follow</a>
+            {% endif %}
+            <a href="{% url 'messages:inbox' username=other_user.username %}" class="btn btn-light" style="border: 1px solid #000; margin-top: -8px; margin-left: 40px;">Message</a>
+            
+            <br>
+            <br>
+            <h4>
+                {{other_user.posts.count}} <span style="font-weight: 300;">Posts</span> &nbsp &nbsp 
+                <a style="text-decoration: none; color: #000;" href="{% url 'profile:followers' pk=other_user.pk %}">{{other_user.follower.count}} <span style="font-weight: 300;">Followers</span></a> &nbsp &nbsp 
+                <a style="text-decoration: none; color: #000;" href="{% url 'profile:following' pk=other_user.pk %}">{{other_user.following.count}} <span style="font-weight: 300;">Following</span></a>
+            </h4>
+            <br>
+            <h5>{{other_user.first_name}} {{other_user.last_name}}</h5>
+            <p>{{other_user.profile.bio|linebreaks}}</p>
+        </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <div class="row">
+    {% for post in other_user.posts.all %}
+        <div class="col-sm-4">
+            <a href="{% url 'post:single_post' pk=post.pk %}"><img src="/media/{{ post.image }}" alt="" width="100%"></a>
+        </div>
+    {% endfor %}
+    </div>
+
+    {% else %}
+
+    <div class="row">
+        <div class="col-sm-4">
+            <center>
+                <img class="rounded-circle" src="/media/{{ user.profile.pro_pic }}" width="150px" height="150px"><br>
+                <a href="{% url 'profile:update_pfp' pk=user.profile.pk %}" class="btn btn-primary btn-sm" style="margin-top: 40px; width: 60%;">Change Profile Picture</a>
+            </center>
+        </div>
+        <div class="col-sm-8">
+            <h3 style="font-weight: 300; display: inline-block; margin-right: 40px;">{{user.username}}</h3>
+            <a href="{% url 'profile:update_user' %}" class="btn btn-sm btn-light" style="margin-top: -13px; margin-right: 40px;">Edit Profile</a>
+            <a href="{% url 'profile:update_user' %}" class="btn btn-sm btn-light" style="margin-top: -13px;">Settings</a>
+            <br>
+            <br>
+
+            <h4>{{user.posts.count}} 
+                <span style="font-weight: 300;">Posts</span> &nbsp &nbsp
+                <a style="text-decoration: none; color: #000;" href="{% url 'profile:followers' pk=user.pk %}">{{user.follower.count}} <span style="font-weight: 300;">Followers</span> &nbsp &nbsp</a>
+                <a style="text-decoration: none; color: #000;" href="{% url 'profile:following' pk=user.pk %}">{{user.following.count}} <span style="font-weight: 300;">Following</span></a>
+            </h4>
+
+            <br>
+            <h5>{{user.first_name}} {{user.last_name}}</h5>
+            <p>{{user.profile.bio|linebreaks}}</p>
+        </div>
+    </div>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <div class="row">
+    {% for post in user.posts.all %}
+        <div class="col-sm-4">
+            <a href="{% url 'post:single_post' pk=post.pk %}"><img src="/media/{{ post.image }}" alt="" width="100%"></a>
+        </div>
+    {% endfor %}
+    </div>
+
+    {% endif %}
+
+{% endblock %}

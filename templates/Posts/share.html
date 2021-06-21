@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+    <div class=" offset-sm-4 col-sm-4">
+        {% for f in following %}
+        <div class="row" style="padding: 0px 0px;">
+            <div class="col-sm-1">
+                <img class="rounded-circle" src="/media/{{f.profile.pro_pic}}" alt="" width="40px" height="40px">
+            </div>
+            <div class="col-sm-8" style="padding-left: 40px;">
+                <h6 style="display: inline-block;"><a href="{% url 'profile:user_profile' pk=f.pk %}">{{f.username}}</a></h6>
+            </div>
+            <div class="col-sm-3">
+                <form method="POST" action="{% url 'post:share' pk=f.pk %}">
+                    <input type="number" name="post" id="" value="{{pk}}" hidden>
+                    {% csrf_token %}
+        
+                    <input class="btn btn-sm btn-primary" type="submit" name="" id="" value="Send">
+                </form>
+            </div>
+        </div>
+
+        <hr>
+        
+        {% endfor %}
+    </div>
+
+{% endblock %}

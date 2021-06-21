@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+    <div class="row">
+        <div class="offset-sm-3 col-sm-6">
+            <h3 style="margin-bottom: 40px;">Messages</h3>
+            {% for inbox in user.received_from.all %}
+                <a style="text-decoration: none; color: #000;" href="{% url 'messages:inbox' username=inbox.sender %}"><h6 style="background-color: rgb(241, 241, 241);">{{inbox.sender}}
+                    {% if inbox.alert %}
+                    <span style="color: red;">•</span>
+                    {% endif %}
+                </h6></a>
+                <p style="padding-left: 20px; margin-top: -5px;">{{inbox.message}}</p>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

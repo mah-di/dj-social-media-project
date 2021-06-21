@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load custom_filter %}
+
+{% block body %}
+
+    <div class="row">
+        {% if followers %}
+        <div class="offset-sm-4">
+            <h2>Followers</h2>
+        </div>
+        {% for f in current_user.follower.all %}
+        <div class="col-sm-3 offset-sm-4">
+            <a href="{% url 'profile:user_profile' pk=f.follower.pk %}" style="font-size: 18px; text-decoration: none; color: #000; display: inline-block;">{{f.follower}}</a>
+        </div>
+        <div class="col-sm-2">
+            {% if user != f.follower %}
+            {% if f.follower.pk in follow %}
+            <a href="{% url 'profile:unfollow' pk=f.follower.pk %}" class="btn btn-sm btn-primary" style="margin-top: -8px;">Unfollow</a>
+            {% else %}
+            <a href="{% url 'profile:follow' pk=f.follower.pk %}" class="btn btn-sm btn-primary" style="margin-top: -8px;">Follow</a>
+            {% endif %}
+            {% endif %}
+        </div>
+        <br>
+        <br>
+        {% endfor %}
+
+        {% elif following %}
+        <div class="offset-sm-4">
+            <h2>Following</h2>
+        </div>
+        {% for f in current_user.following.all %}
+        <div class="col-sm-3 offset-sm-4">
+            <a href="{% url 'profile:user_profile' pk=f.following.pk %}" style="font-size: 18px; text-decoration: none; color: #000; display: inline-block;">{{f.following}}</a>
+        </div>
+        <div class="col-sm-2">
+            {% if user != f.following %}
+            {% if f.following.pk in follow %}
+            <a href="{% url 'profile:unfollow' pk=f.following.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Unfollow</a>
+            {% else %}
+            <a href="{% url 'profile:follow' pk=f.following.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Follow</a>
+            {% endif %}
+            {% endif %}
+        </div>
+        <br>
+        <br>
+        {% endfor %}
+        
+        {% elif like_list %}
+        <div class="offset-sm-4">
+            <h2>Likes</h2>
+        </div>
+        {% for like in likes %}
+        <div class="col-sm-3 offset-sm-4">
+            <a href="{% url 'profile:user_profile' pk=like.liker.pk %}" style="font-size: 18px; text-decoration: none; color: #000; display: inline-block;">{{like.liker}}</a>
+        </div>
+        <div class="col-sm-2">
+            {% if user != like.liker %}
+            {% if like.liker.pk in follow %}
+            <a href="{% url 'profile:unfollow' pk=like.liker.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Unfollow</a>
+            {% else %}
+            <a href="{% url 'profile:follow' pk=like.liker.pk %}" class="btn btn-primary btn-sm" style="margin-top: -8px;">Follow</a>
+            {% endif %}
+            {% endif %}
+        </div>
+        <br>
+        <br>
+        {% endfor %}
+        
+        {% endif %}
+    </div>
+
+{% endblock %}

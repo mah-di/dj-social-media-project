@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block body %}
+
+    <center>
+        <div class="col-sm-4">
+            <form method="POST" enctype="multipart/form-data">
+                {{ form1|crispy }}
+                {{ form2|crispy }}
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-danger" style="width: 100%;">Update Profile</button>
+            </form>
+        </div>
+    </center>
+
+{% endblock %}
