@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import SignUpForm, SetUpProfileForm
+from .models import UserProfile
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
@@ -29,44 +30,16 @@ def signup(req):
 
 @login_required
 def setup_profile(req):
-    if req.META.get('HTTP_REFERER') != 'http://127.0.0.1:8000/account/signup/' and req.META.get('HTTP_REFERER') != 'http://127.0.0.1:8000/account/profile-setup/':
-        return redirect('profile:profile')
+    profile = UserProfile.objects.get_or_create(user=req.user)[0]
+    form = SetUpProfileForm(instance=profile)
     
-    form = SetUpProfileForm()
-    set_profile = True
     if req.method == 'POST':
-        form = SetUpProfileForm(req.POST, req.FILES)
+        form = SetUpProfileForm(req.POST, req.FILES, instance=profile)
         if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = req.user
-            profile.save()
+            form.save()
             return redirect('profile:profile')
 
-    return render(req, 'Accounts/signup.html', context={'form':form, 'set_profile':set_profile})
-
-# class ProfileSetUp(LoginRequiredMixin, CreateView):
-#     model = UserProfile
-#     fields = ('pro_pic', 'dob', 'bio', 'country', 'phone_number', 'facebook_profile', 'insta_profile',)
-#     template_name = 'Accounts/signup.html'
-#     context_object_name = 'form'
-
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['set_profile'] = True
-
-#         return context
-
-#     def dispatch(self, request, *args, **kwargs):
-#         if self.request.META.get('HTTP_REFERER') != 'http://127.0.0.1:8000/account/signup/' and self.request.META.get('HTTP_REFERER') != 'http://127.0.0.1:8000/account/profile-setup/':
-#             raise Http404
-
-#         return super().dispatch(request, *args, **kwargs)
-
-#     def form_valid(self, form):
-#         profile = form.save(commit=False)
-#         profile.user = self.request.user
-#         profile.save()
-#         return redirect('profile:profile')
+    return render(req, 'Accounts/signup.html', context={'form':form, 'set_profile':True})
 
 def user_login(req):
     if req.user.is_authenticated:

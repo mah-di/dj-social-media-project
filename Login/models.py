@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 from django.db.models.deletion import CASCADE
+from django.dispatch.dispatcher import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
@@ -37,3 +39,10 @@ class UserProfile(models.Model):
             self.pro_pic = 'profile_pics/pfp.jpg'
 
         return super().save(*args, **kwargs)
+
+
+
+@receiver(post_save, sender=User)
+def user_profile_init(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)

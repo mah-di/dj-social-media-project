@@ -142,4 +142,4 @@ MEDIA_ROOT = MEDIA_DIR
 
 # Login
 
-LOGIN_URL = '/account/signup/'
+LOGIN_URL = '/account/login/'

@@ -19,6 +19,11 @@
             <hr>
             <p>Already Have an Account? <a href="{% url 'account:login' %}">Log In</a></p>
         </div>
+        {% elif login %}
+        <div class="com-sm-4">
+            <hr>
+            <p>Don't Have an Account? <a href="{% url 'account:signup' %}">Sign Up</a></p>
+        </div>
         {% endif %}
     </center>
 
