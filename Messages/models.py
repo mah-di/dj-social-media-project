@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from Posts.models import Post
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from .tasks import message_alert
 
 # Create your models here.
 
@@ -42,14 +43,4 @@ class InboxAlert(models.Model):
 
 @receiver(post_save, sender=Message)
 def msg_alert(sender, instance, **kwargs):
-    check = InboxAlert.objects.filter(sender=instance.sender, receiver=instance.receiver)
-    if not check:
-        InboxAlert(sender=instance.sender, receiver=instance.receiver).save()
-        InboxAlert(sender=instance.receiver, receiver=instance.sender, alert=False).save()
-    InboxAlert.objects.filter(sender=instance.sender, receiver=instance.receiver).update(alert=True)
-    update = InboxAlert.objects.get(sender=instance.sender, receiver=instance.receiver)
-    update.message = instance.preview
-    update.save()
-    update = InboxAlert.objects.get(sender=instance.receiver, receiver=instance.sender)
-    update.message = 'You : ' + instance.preview
-    update.save()
+    message_alert.delay(instance.sender.pk, instance.receiver.pk, instance.preview)

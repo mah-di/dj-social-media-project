@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'crispy_forms',
     'django_cleanup.apps.CleanupConfig',
+    'django_celery_results',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -143,3 +144,10 @@ MEDIA_ROOT = MEDIA_DIR
 # Login
 
 LOGIN_URL = '/account/login/'
+
+
+# Celery settings
+
+CELERY_BROKER_URL = 'localhost'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = 'django-db'

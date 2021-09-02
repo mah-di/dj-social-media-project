@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from .tasks import new_follow_notify
 
 # Create your models here.
 
@@ -15,8 +16,7 @@ class Follow(models.Model):
 
     def save(self, *args, **kwargs):
         response = super().save(*args, **kwargs)
-        notification = Notification(user=self.following, notifier=self.follower, notification='started following you', follow=True, object=self)
-        notification.save()
+        new_follow_notify.delay(self.following.pk, self.follower.pk, self.pk)
 
         return response
 

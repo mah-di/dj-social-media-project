@@ -62,4 +62,4 @@ def user_login(req):
 def user_logout(req):
     logout(req)
 
-    return redirect('account:signup')
+    return redirect('account:login')
