@@ -8,6 +8,12 @@ This is a simple social media project built with django. This project is for lea
 Used Django template engine to build the frontend and default SQLite for database.
 
 
+## Technologies used
+- Django
+- Celery
+- Django Celery Results
+
+
 ## Setup
 1. Download or clone the project in your desired location on your local machine
 2. Create a virtual environtment - `virtualenv env`
@@ -16,11 +22,6 @@ Used Django template engine to build the frontend and default SQLite for databas
 5. Start development server - `python manage.py runserver`
 6. Enter `localhost:8000` or `127.0.0.1:8000` on your browser to access the site
 
-
-## Technologies used
-- Django
-- Celery
-- Django Celery Results
 
 ## Running Celery
 - First you need to setup a message broker to communicate with Celery.
